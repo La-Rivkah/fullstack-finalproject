@@ -3,21 +3,36 @@
   justify-content: space-between;
   align-items: center;
 
-  margin-top: 18px;
-
-  padding: 14px 16px;
+  margin-top: 20px;
+  padding: 14px 18px;
 
   border-radius: 20px;
-  border: 1px solid var(--border);
 
-  background: var(--surface);
+  background: linear-gradient(
+    145deg,
+    var(--surface),
+    rgba(255, 255, 255, 0.02)
+  );
+
+  border: 1px solid rgba(255, 255, 255, 0.06);
 
   font-size: 13px;
   color: var(--muted);
+
+  backdrop-filter: blur(6px);
+
+  transition: all 0.25s ease;
+}
+
+.footer:hover {
+  border-color: rgba(99, 227, 212, 0.25);
 }
 
 .footer p {
   margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .footer span {
@@ -27,19 +42,20 @@
 
 .footer p:not(:last-child) {
   position: relative;
-  padding-right: 12px;
+  padding-right: 16px;
 }
 
 .footer p:not(:last-child)::after {
   content: "";
   position: absolute;
-  right: 0;
+  right: 4px;
   top: 50%;
 
   transform: translateY(-50%);
 
-  width: 1px;
-  height: 12px;
+  width: 4px;
+  height: 4px;
 
-  background: var(--border);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
 }

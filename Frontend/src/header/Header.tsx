@@ -1,4 +1,9 @@
+import "./Header.css";
 function Header() {
-  return <h1>Task Manager Bugteam</h1>;
+  return (
+    <div className="header">
+      <h1>Task Manager Rebeca</h1>
+    </div>
+  );
 }
 export default Header;

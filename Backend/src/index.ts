@@ -1,8 +1,6 @@
-import express from "express";
-import type { Request, Response, NextFunction } from "express";
+import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import { PrismaClient } from "@prisma/client";
-import { PrismaPg } from "@prisma/adapter-pg";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
 
@@ -10,21 +8,17 @@ const app = express();
 
 const PORT = process.env.PORT || 3000;
 
-const SECRET_KEY = process.env.JWT_SECRET || "mi_clave_secreta";
-
-const adapter = new PrismaPg({
-  connectionString: process.env.DATABASE_URL!,
-});
-
-const prisma = new PrismaClient({ adapter });
+const prisma = new PrismaClient();
 
 app.use(
   cors({
-    origin: "*", 
+    origin: "*",
   })
 );
 
 app.use(express.json());
+
+const SECRET_KEY = process.env.JWT_SECRET || "mi_clave_secreta";
 
 app.post("/login", (req: Request, res: Response) => {
   const { username, password } = req.body;
@@ -54,24 +48,16 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
 
   const token = authHeader.split(" ")[1];
 
-  if (!token) {
-    return res.status(401).json({ message: "Invalid token format" });
-  }
-
   try {
     jwt.verify(token, SECRET_KEY);
     next();
   } catch {
-    return res.status(403).json({ message: "Invalid or expired token" });
+    return res.status(403).json({ message: "Invalid token" });
   }
 };
 
 app.get("/", (_req: Request, res: Response) => {
-  res.send("Backend is working!");
-});
-
-app.get("/private", verifyToken, (_req: Request, res: Response) => {
-  res.json({ message: "Acceso permitido" });
+  res.send("Backend is working 🚀");
 });
 
 app.get("/tasks", async (_req: Request, res: Response) => {
@@ -82,30 +68,28 @@ app.get("/tasks", async (_req: Request, res: Response) => {
 
     res.json(tasks);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Failed to fetch tasks" });
+    res.status(500).json({ message: "Error fetching tasks" });
   }
 });
 
 app.post("/tasks", async (req: Request, res: Response) => {
   try {
-    const { title, completed } = req.body;
+    const { title } = req.body;
 
-    if (!title || title.trim() === "") {
-      return res.status(400).json({ message: "Title is required" });
+    if (!title) {
+      return res.status(400).json({ message: "Title required" });
     }
 
-    const newTask = await prisma.task.create({
+    const task = await prisma.task.create({
       data: {
         title: title.trim(),
-        completed: completed ?? false,
+        completed: false,
       },
     });
 
-    res.status(201).json(newTask);
+    res.status(201).json(task);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Failed to create task" });
+    res.status(500).json({ message: "Error creating task" });
   }
 });
 
@@ -114,52 +98,17 @@ app.put("/tasks/:id", async (req: Request, res: Response) => {
     const id = Number(req.params.id);
     const { title, completed } = req.body;
 
-    const existingTask = await prisma.task.findUnique({ where: { id } });
-
-    if (!existingTask) {
-      return res.status(404).json({ message: "Task not found" });
-    }
-
-    const updatedTask = await prisma.task.update({
+    const task = await prisma.task.update({
       where: { id },
       data: {
-        title:
-          title !== undefined && title.trim() !== ""
-            ? title.trim()
-            : existingTask.title,
-        completed:
-          completed !== undefined ? completed : existingTask.completed,
+        title,
+        completed,
       },
     });
 
-    res.json(updatedTask);
+    res.json(task);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Failed to update task" });
-  }
-});
-
-app.patch("/tasks/:id/toggle", async (req: Request, res: Response) => {
-  try {
-    const id = Number(req.params.id);
-
-    const task = await prisma.task.findUnique({ where: { id } });
-
-    if (!task) {
-      return res.status(404).json({ message: "Task not found" });
-    }
-
-    const updated = await prisma.task.update({
-      where: { id },
-      data: {
-        completed: !task.completed,
-      },
-    });
-
-    res.json(updated);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Failed to toggle task" });
+    res.status(500).json({ message: "Error updating task" });
   }
 });
 
@@ -167,18 +116,13 @@ app.delete("/tasks/:id", async (req: Request, res: Response) => {
   try {
     const id = Number(req.params.id);
 
-    const task = await prisma.task.findUnique({ where: { id } });
+    await prisma.task.delete({
+      where: { id },
+    });
 
-    if (!task) {
-      return res.status(404).json({ message: "Task not found" });
-    }
-
-    await prisma.task.delete({ where: { id } });
-
-    res.json({ message: "Task deleted successfully" });
+    res.json({ message: "Task deleted" });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Failed to delete task" });
+    res.status(500).json({ message: "Error deleting task" });
   }
 });
 

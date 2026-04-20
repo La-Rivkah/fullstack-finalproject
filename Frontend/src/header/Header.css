@@ -1,6 +1,10 @@
 .header {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 32px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .header h1 {
@@ -8,20 +12,51 @@
   font-weight: 700;
   letter-spacing: 1px;
 
-  color: var(--text);
+  background: linear-gradient(
+    90deg,
+    var(--pink),
+    var(--cyan)
+  );
 
-  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  background-clip: text; 
+  color: transparent;
+}
+
+.header h1 {
+  background-size: 200% 200%;
+  animation: gradientMove 4s ease infinite;
+}
+
+@keyframes gradientMove {
+  0% { background-position: 0% }
+  50% { background-position: 100% }
+  100% { background-position: 0% }
 }
 
 .header h1::after {
   content: "";
   display: block;
 
-  width: 50px;
+  width: 60px;
   height: 3px;
 
-  margin: 8px auto 0;
+  margin: 10px auto 0;
 
   border-radius: 10px;
-  background: var(--cyan);
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--cyan),
+    transparent
+  );
+}
+
+.header p {
+  font-size: 13px;
+  color: var(--muted);
+  opacity: 0.8;
 }

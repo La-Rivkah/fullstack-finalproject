@@ -1,32 +1,59 @@
 .empty-container {
   text-align: center;
 
-  padding: 32px 20px;
+  padding: 36px 24px;
 
   border-radius: 22px;
-  border: 1px dashed var(--border);
 
-  background: transparent;
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.02),
+    rgba(255, 255, 255, 0.01)
+  );
+
+  border: 1px solid rgba(255, 255, 255, 0.06);
 
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+
+  backdrop-filter: blur(6px);
+
+  transition: all 0.3s ease;
+}
+
+.empty-container:hover {
+  border-color: rgba(99, 227, 212, 0.25);
+  transform: translateY(-2px);
 }
 
 .empty-icon {
-  font-size: 32px;
-  opacity: 0.7;
+  font-size: 36px;
+
+  background: radial-gradient(
+    circle,
+    rgba(99, 227, 212, 0.2),
+    transparent 70%
+  );
+
+  padding: 14px;
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .empty-title {
   font-size: 16px;
   font-weight: 600;
-
   color: var(--text);
 }
 
 .empty-text {
   font-size: 13px;
   color: var(--muted);
+  opacity: 0.85;
+  max-width: 240px;
 }
