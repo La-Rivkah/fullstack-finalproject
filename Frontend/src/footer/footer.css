@@ -1,0 +1,31 @@
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 14px 16px;
+  margin-top: 20px;
+
+  background: linear-gradient(135deg, #fafbff, #f1f3ff);
+  border-radius: 14px;
+
+  font-size: 13px;
+  color: var(--subtext);
+
+  border: 1px solid rgba(108, 99, 255, 0.08);
+  backdrop-filter: blur(4px);
+  transition: 0.2s;
+}
+
+.footer p {
+  margin: 0;
+  font-weight: 500;
+}
+
+.footer p:nth-child(2) {
+  color: var(--primary);
+}
+
+.footer:hover {
+  transform: translateY(-1px);
+}

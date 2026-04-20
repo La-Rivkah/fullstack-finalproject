@@ -1,0 +1,35 @@
+.empty-container {
+  text-align: center;
+  padding: 32px 22px;
+  margin-top: 20px;
+
+  border-radius: 16px;
+  border: 1px dashed rgba(108, 99, 255, 0.2);
+
+  background: linear-gradient(135deg, #fafbff, #f4f6ff);
+  transition: 0.2s;
+}
+
+.empty-container:hover {
+  transform: translateY(-2px);
+}
+
+.empty-icon {
+  font-size: 44px;
+  margin-bottom: 12px;
+  color: var(--primary);
+  opacity: 0.9;
+}
+
+.empty-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  color: var(--text);
+}
+
+.empty-text {
+  font-size: 14px;
+  color: var(--subtext);
+  margin-top: 8px;
+}
