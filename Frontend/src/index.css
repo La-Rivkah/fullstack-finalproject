@@ -1,12 +1,21 @@
 :root {
-  --bg: #f5f7fb;
-  --card: #ffffff;
-  --primary: #6c63ff;
-  --secondary: #4cafef;
-  --accent: #8bc34a;
-  --text: #2e2e2e;
-  --subtext: #777;
-  --danger: #ff5c5c;
+  --bg: #111B2D;
+
+  --card: #162338;
+  --surface: #1c2a44;
+
+  --text: #e6edf3;
+  --muted: #8fa3bf;
+
+  --cyan: #63E3D4;
+  --pink: #E21270;
+  --yellow: #FFFB1F;
+  --orange: #FF8547;
+  --purple: #52489C;
+
+  --border: #2b3a55;
+
+  --radius: 24px;
 }
 
 * {
@@ -16,18 +25,19 @@
 }
 
 body {
-  background: linear-gradient(135deg, #eef2ff, #f8f9ff);
-  font-family: "Inter", "Segoe UI", sans-serif;
+  font-family: "Inter", system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+
   display: flex;
   justify-content: center;
+  align-items: center;
+
+  min-height: 100vh;
 }
 
-.app-container {
+#root {
   width: 100%;
-  max-width: 520px;
-  margin: 50px auto;
-  background: var(--card);
-  border-radius: 18px;
-  padding: 24px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  display: flex;
+  justify-content: center;
 }

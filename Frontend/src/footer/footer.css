@@ -3,29 +3,43 @@
   justify-content: space-between;
   align-items: center;
 
-  padding: 14px 16px;
-  margin-top: 20px;
+  margin-top: 18px;
 
-  background: linear-gradient(135deg, #fafbff, #f1f3ff);
-  border-radius: 14px;
+  padding: 14px 16px;
+
+  border-radius: 20px;
+  border: 1px solid var(--border);
+
+  background: var(--surface);
 
   font-size: 13px;
-  color: var(--subtext);
-
-  border: 1px solid rgba(108, 99, 255, 0.08);
-  backdrop-filter: blur(4px);
-  transition: 0.2s;
+  color: var(--muted);
 }
 
 .footer p {
   margin: 0;
-  font-weight: 500;
 }
 
-.footer p:nth-child(2) {
-  color: var(--primary);
+.footer span {
+  color: var(--cyan);
+  font-weight: 600;
 }
 
-.footer:hover {
-  transform: translateY(-1px);
+.footer p:not(:last-child) {
+  position: relative;
+  padding-right: 12px;
+}
+
+.footer p:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  width: 1px;
+  height: 12px;
+
+  background: var(--border);
 }

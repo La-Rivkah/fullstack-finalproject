@@ -1,4 +1,5 @@
 import type { Task } from "../App";
+import { Trash2 } from "lucide-react";
 import "./TaskCard.css";
 
 type Props = {
@@ -20,17 +21,20 @@ function TaskCard({ task, deleteTask, toggleTask }: Props) {
           onChange={handleToggle}
         />
 
-        <span className={task.completed ? "text-done" : ""}>
+        <span className="task-text">
           {task.title}
         </span>
+
+        {task.completed && <span className="status-badge">Completado</span>}
+
       </label>
 
       <button
         className="delete-btn"
         onClick={handleDelete}
-        aria-label="Eliminar tarea"
+        aria-label="Eliminar"
       >
-        ✕
+        <Trash2 size={16} />
       </button>
     </li>
   );

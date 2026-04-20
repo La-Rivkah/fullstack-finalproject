@@ -1,49 +1,103 @@
 .task-card {
+  background: var(--surface);
+  border-radius: 22px;
+
+  padding: 16px 18px;
+
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #fafafa;
-  padding: 14px;
-  margin-bottom: 10px;
-  border-radius: 14px;
-  transition: 0.2s;
-  border: 1px solid #eee;
-  color: #000;
+
+  border: 1px solid var(--border);
+
+  transition: border 0.2s ease, transform 0.15s ease;
 }
 
 .task-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.05);
-}
-
-.task-card.completed {
-  background: #f0f4ff;
+  border-color: var(--cyan);
+  transform: translateY(-1px);
 }
 
 .task-left {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 16px;
 }
 
-.task-left input {
+.task-card input[type="checkbox"] {
+  accent-color: var(--cyan);
   cursor: pointer;
+  transform: scale(1.1);
+}
+
+.task-card span {
+  font-size: 14px;
+  letter-spacing: 0.2px;
 }
 
 .text-done {
   text-decoration: line-through;
-  color: var(--subtext);
+  color: var(--muted);
+  opacity: 0.7;
 }
 
+.task-text {
+  font-size: 14px;
+  color: var(--text);
+}
+
+.task-card.completed .task-text {
+  color: var(--cyan);
+  opacity: 0.85;
+}
+
+.status-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+
+  border-radius: 999px;
+
+  background: rgba(99, 227, 212, 0.15);
+  color: var(--cyan);
+
+  margin-left: 8px;
+}
+
+
+
 .delete-btn {
-  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 32px;
+  height: 32px;
+
+  border-radius: 10px;
+  border: 1px solid var(--border);
+
   background: transparent;
-  color: var(--danger);
-  font-size: 18px;
+  color: var(--muted);
+
   cursor: pointer;
-  transition: 0.2s;
+
+  transition: all 0.2s ease;
 }
 
 .delete-btn:hover {
-  transform: scale(1.2);
+  border-color: var(--pink);
+  color: var(--pink);
+  background: rgba(226, 18, 112, 0.08);
+}
+
+.delete-btn:active {
+  transform: scale(0.92);
+}
+
+.delete-btn svg {
+  transition: transform 0.2s ease;
+}
+
+.delete-btn:hover svg {
+  transform: scale(1.15);
 }

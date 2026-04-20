@@ -1,7 +1,27 @@
-h1 {
+.header {
   text-align: center;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  color: var(--primary);
-  margin-bottom: 25px;
+  margin-bottom: 30px;
+}
+
+.header h1 {
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: 1px;
+
+  color: var(--text);
+
+  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+}
+
+.header h1::after {
+  content: "";
+  display: block;
+
+  width: 50px;
+  height: 3px;
+
+  margin: 8px auto 0;
+
+  border-radius: 10px;
+  background: var(--cyan);
 }

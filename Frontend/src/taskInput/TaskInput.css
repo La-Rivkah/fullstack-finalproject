@@ -1,40 +1,62 @@
 .task-input {
+  margin-bottom: 18px;
   display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: 8px;
+  padding: 18px 0;
 }
 
 .task-input input {
   flex: 1;
-  padding: 12px;
-  border-radius: 12px;
-  border: 1px solid #e0e0e0;
-  outline: none;
-  transition: 0.2s;
+
+  padding: 14px 18px;
+
+  border-radius: 20px;
+  border: 1px solid var(--border);
+
+  background: var(--surface);
+  color: var(--text);
+
   font-size: 14px;
+  outline: none;
+
+  transition: border 0.2s ease;
+}
+
+.task-input input::placeholder {
+  color: var(--muted);
 }
 
 .task-input input:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 2px rgba(108, 99, 255, 0.15);
+  border-color: var(--cyan);
 }
 
 .add-button {
-  padding: 12px 16px;
+  padding: 0 18px;
+
+  border-radius: 20px;
   border: none;
-  border-radius: 12px;
-  background: var(--primary);
-  color: white;
+
+  background: var(--cyan);
+  color: #001018;
+
+  font-weight: 600;
+  font-size: 14px;
+
   cursor: pointer;
-  transition: 0.2s;
+
+  transition: transform 0.15s ease, opacity 0.2s ease;
 }
 
 .add-button:hover {
-  transform: translateY(-1px);
-  background: #5a52e0;
+  opacity: 0.9;
+}
+
+.add-button:active {
+  transform: scale(0.96);
 }
 
 .add-button:disabled {
-  opacity: 0.5;
+  background: #2b3a55;
+  color: #6b7c96;
   cursor: not-allowed;
 }
