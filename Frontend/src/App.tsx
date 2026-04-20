@@ -7,8 +7,10 @@ import EmptyState from "./emptyState/EmptyState";
 
 export interface Task {
   id: number;
-  text: string;
+  title: string;
   completed: boolean;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 const API = import.meta.env.VITE_API_URL;
@@ -19,9 +21,6 @@ function App(): JSX.Element {
 
   const fetchTasks = async () => {
     try {
-
-      setLoading(true);
-
       const res = await fetch(`${API}/tasks`);
       const data: Task[] = await res.json();
       setTasks(data);
@@ -33,27 +32,11 @@ function App(): JSX.Element {
   };
 
   useEffect(() => {
-    let isCancelled = false;
+    const timeoutId = window.setTimeout(() => {
+      void fetchTasks();
+    }, 0);
 
-    fetch(`${API}/tasks`)
-      .then((res) => res.json())
-      .then((data: Task[]) => {
-        if (!isCancelled) {
-          setTasks(data);
-        }
-      })
-      .catch((error) => {
-        console.error("Error al obtener tareas:", error);
-      })
-      .finally(() => {
-        if (!isCancelled) {
-          setLoading(false);
-        }
-      });
-
-    return () => {
-      isCancelled = true;
-    };
+    return () => window.clearTimeout(timeoutId);
   }, []);
 
   const addTask = async (text: string) => {
@@ -63,7 +46,7 @@ function App(): JSX.Element {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ text }),
+        body: JSON.stringify({ title: text }),
       });
 
       fetchTasks();
@@ -107,7 +90,6 @@ function App(): JSX.Element {
   return (
     <div className="app-container">
       <Header />
-
       <TaskInput addTask={addTask} />
 
       {loading ? (
