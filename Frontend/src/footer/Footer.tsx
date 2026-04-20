@@ -1,3 +1,4 @@
+import type { ReactElement } from "react";
 import "./Footer.css";
 
 type Props = {
@@ -5,7 +6,7 @@ type Props = {
   completed: number;
 };
 
-function Footer({ total, completed }: Props): JSX.Element {
+function Footer({ total, completed }: Props): ReactElement {
   const incomplete = total - completed;
 
   return (

@@ -1,4 +1,4 @@
-import { Task } from "../App";
+import type { Task } from "../App";
 import "./TaskCard.css";
 
 type Props = {
@@ -7,7 +7,7 @@ type Props = {
   toggleTask: (task: Task) => void;
 };
 
-function TaskCard({ task, deleteTask, toggleTask }: Props): JSX.Element {
+function TaskCard({ task, deleteTask, toggleTask }: Props): React.ReactElement {
   const handleToggle = () => toggleTask(task);
   const handleDelete = () => deleteTask(task.id);
 

@@ -1,5 +1,5 @@
-import TaskCard from "../TaskCard/TaskCard";
-import { Task } from "../App";
+import TaskCard from "../taskCard/TaskCard";
+import type { Task } from "../App";
 import "./TaskList.css";
 
 type Props = {

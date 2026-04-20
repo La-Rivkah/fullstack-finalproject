@@ -1,6 +1,6 @@
 import "./EmptyState.css";
 
-function EmptyState(): JSX.Element {
+function EmptyState() {
   return (
     <div className="empty-container">
       <h4 className="empty-title">No hay tareas aún</h4>

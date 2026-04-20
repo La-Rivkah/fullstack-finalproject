@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
-import Header from "./Header/Header";
-import TaskInput from "./TaskInput/TaskInput";
-import TaskList from "./TaskList/TaskList";
-import Footer from "./Footer/Footer";
-import EmptyState from "./EmptyState/EmptyState";
+import { useEffect, useState, type JSX } from "react";
+import Header from "./header/Header";
+import TaskInput from "./taskInput/TaskInput";
+import TaskList from "./taskList/TaskList";
+import Footer from "./footer/Footer";
+import EmptyState from "./emptyState/EmptyState";
 
 export interface Task {
   id: number;
@@ -19,6 +19,9 @@ function App(): JSX.Element {
 
   const fetchTasks = async () => {
     try {
+
+      setLoading(true);
+
       const res = await fetch(`${API}/tasks`);
       const data: Task[] = await res.json();
       setTasks(data);
@@ -30,7 +33,27 @@ function App(): JSX.Element {
   };
 
   useEffect(() => {
-    fetchTasks();
+    let isCancelled = false;
+
+    fetch(`${API}/tasks`)
+      .then((res) => res.json())
+      .then((data: Task[]) => {
+        if (!isCancelled) {
+          setTasks(data);
+        }
+      })
+      .catch((error) => {
+        console.error("Error al obtener tareas:", error);
+      })
+      .finally(() => {
+        if (!isCancelled) {
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      isCancelled = true;
+    };
   }, []);
 
   const addTask = async (text: string) => {

@@ -5,7 +5,7 @@ type Props = {
   addTask: (text: string) => void;
 };
 
-function TaskInput({ addTask }: Props): JSX.Element {
+function TaskInput({ addTask }: Props) {
   const [text, setText] = useState<string>("");
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
