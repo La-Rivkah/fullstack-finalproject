@@ -1,5 +1,5 @@
 import type { ReactElement } from "react";
-import "./Footer.css";
+import "./footer.css";
 
 type Props = {
   total: number;
