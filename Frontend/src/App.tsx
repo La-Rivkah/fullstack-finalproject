@@ -14,6 +14,7 @@ export interface Task {
 }
 
 const API = import.meta.env.VITE_API_URL;
+console.log("API URL:", API);
 
 function App(): JSX.Element {
   const [tasks, setTasks] = useState<Task[]>([]);
