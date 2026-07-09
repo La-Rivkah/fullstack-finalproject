@@ -1,7 +1,6 @@
-# FullStack 
+# FullStack Proyecto Final Modulo 1
  
-[Descripción breve: qué hace la app en 1-2 líneas]
- 
+El proyecto consiste en una aplicación web de gestión de tareas que implementa las operaciones CRUD (crear, visualizar, editar, marcar como completadas y eliminar tareas). La información se sincroniza y actualiza en tiempo real, reflejando los cambios inmediatamente en la interfaz del usuario.
 <!-- BADGE_CI -->
  
 ## 🚀 Instalación local
