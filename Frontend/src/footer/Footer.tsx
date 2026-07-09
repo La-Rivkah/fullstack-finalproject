@@ -11,9 +11,9 @@ function Footer({ total, completed }: Props): ReactElement {
 
   return (
     <footer className="footer">
-      <p>Incompletas: {incomplete}</p>
-      <p>Completadas: {completed}</p>
-      <p>Total: {total}</p>
+      <p>Tareas Incompletas: {incomplete}</p>
+      <p>Tareas Completadas: {completed}</p>
+      <p>Tareas Totales: {total}</p>
     </footer>
   );
 }
