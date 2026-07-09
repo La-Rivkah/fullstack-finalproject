@@ -9,6 +9,8 @@ type Props = {
 };
 
 function TaskList({ tasks, deleteTask, toggleTask }: Props) {
+  //Recorre la lista de tareas y renderiza un TaskCard para cada una,
+  //  pasando las funciones necesarias para completar o eliminar la tarea.
   return (
     <ul className="task-list">
       {tasks.map((task) => (
