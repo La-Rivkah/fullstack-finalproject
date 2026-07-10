@@ -17,8 +17,8 @@ function TaskList({ tasks, deleteTask, toggleTask }: Props) {
         <TaskCard
           key={task.id}
           task={task}
-          deleteTask={deleteTask}
-          toggleTask={toggleTask}
+          deleteTask={deleteTask
+          toggleTask={toggleTask
         />
       ))}
     </ul>
