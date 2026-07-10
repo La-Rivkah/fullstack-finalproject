@@ -1,7 +1,8 @@
 # FullStack Proyecto Final Modulo 1
  
 El proyecto consiste en una aplicación web de gestión de tareas que implementa las operaciones CRUD (crear, visualizar, editar, marcar como completadas y eliminar tareas). La información se sincroniza y actualiza en tiempo real, reflejando los cambios inmediatamente en la interfaz del usuario.
-<!-- BADGE_CI -->
+
+[![CI](https://github.com/La-Rivkah/fullstack-finalproject/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/La-Rivkah/fullstack-finalproject/actions/workflows/ci.yml)
  
 ## 🚀 Instalación local
  
