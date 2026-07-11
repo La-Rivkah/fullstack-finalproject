@@ -4,7 +4,7 @@ El proyecto consiste en una aplicación web de gestión de tareas que implementa
 
 [![CI](https://github.com/La-Rivkah/fullstack-finalproject/actions/workflows/ci.yml/badge.svg)](https://github.com/La-Rivkah/fullstack-finalproject/actions/workflows/ci.yml)
  
-## 🚀 Instalación local
+## 🚀 Instalación local.
  
 ```bash
 git clone https://github.com/La-Rivkah/fullstack-finalproject.git
@@ -21,7 +21,7 @@ JWT_SECRET=
 PORT=
 ```
  
-## 📜 Comandos disponibles
+## 📜 Comandos disponibles.
  
 | Comando          | Descripción                                |
 |------------------|--------------------------------------------|
