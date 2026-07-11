@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction } from "express";
+/*import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import { PrismaClient } from "@prisma/client";
 import jwt from "jsonwebtoken";
@@ -125,6 +125,15 @@ app.delete("/tasks/:id", async (req: Request, res: Response) => {
     res.status(500).json({ message: "Error deleting task" });
   }
 });
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+*/
+
+import app from "./app";
+
+const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
