@@ -36,7 +36,7 @@ function TaskInput({ addTask }: Props) {
         type="submit"
         disabled={!text.trim()}
       >
-        Agregar
+        Agregar Tarea
       </button>
     </form>
   );
