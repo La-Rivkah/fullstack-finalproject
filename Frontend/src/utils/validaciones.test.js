@@ -1,29 +1,25 @@
-import { describe, it, expect } from 'vitest'
+import { test, expect } from '@playwright/test'
 import {
   esCorreoValido,
   contarTareasPendientes,
 } from './validaciones'
 
-describe('esCorreoValido', () => {
-  it('acepta un correo con formato válido', () => {
-    const correo = 'ana@ejemplo.com'
-
-    const resultado = esCorreoValido(correo)
+test.describe('esCorreoValido', () => {
+  test('acepta un correo con formato válido', () => {
+    const resultado = esCorreoValido('ana@ejemplo.com')
 
     expect(resultado).toBe(true)
   })
 
-  it('rechaza un correo sin arroba', () => {
-    const correo = 'ana-ejemplo.com'
-
-    const resultado = esCorreoValido(correo)
+  test('rechaza un correo sin arroba', () => {
+    const resultado = esCorreoValido('ana-ejemplo.com')
 
     expect(resultado).toBe(false)
   })
 })
 
-describe('contarTareasPendientes', () => {
-  it('cuenta solo las tareas no completadas', () => {
+test.describe('contarTareasPendientes', () => {
+  test('cuenta solo las tareas no completadas', () => {
     const tareas = [
       { completed: true },
       { completed: false },
@@ -33,7 +29,7 @@ describe('contarTareasPendientes', () => {
     expect(contarTareasPendientes(tareas)).toBe(2)
   })
 
-  it('devuelve 0 cuando la lista está vacía', () => {
+  test('devuelve 0 cuando la lista está vacía', () => {
     expect(contarTareasPendientes([])).toBe(0)
   })
 })
