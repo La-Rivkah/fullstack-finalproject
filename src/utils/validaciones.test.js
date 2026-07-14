@@ -6,17 +6,13 @@ import {
 
 describe('esCorreoValido', () => {
   it('acepta un correo con formato válido', () => {
-    const correo = 'ana@ejemplo.com'
-
-    const resultado = esCorreoValido(correo)
+    const resultado = esCorreoValido('ana@ejemplo.com')
 
     expect(resultado).toBe(true)
   })
 
   it('rechaza un correo sin arroba', () => {
-    const correo = 'ana-ejemplo.com'
-
-    const resultado = esCorreoValido(correo)
+    const resultado = esCorreoValido('ana-ejemplo.com')
 
     expect(resultado).toBe(false)
   })
