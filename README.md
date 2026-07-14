@@ -55,3 +55,5 @@ PostgreSQL con migraciones y seeds gestionados con Prisma (ver Módulo 2).
 - Express
 - PostgreSQL
 - Prisma
+- GIT
+- BAsh
