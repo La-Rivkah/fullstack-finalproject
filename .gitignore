@@ -31,5 +31,17 @@ lerna-debug.log*
 *.sln
 *.sw?
 
+<<<<<<< HEAD
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 13fed7c (arreglando y subiendo cambios)
+=======
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
+>>>>>>> 634a474 (ci:integrar pruebas, cobertura y el e2e al pipeline2)
