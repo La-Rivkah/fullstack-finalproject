@@ -1,0 +1,64 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: fullstack-postgres
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_USER: appuser
+      POSTGRES_PASSWORD: apppass
+      POSTGRES_DB: appdb
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U appuser -d appdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+      args:
+        DATABASE_URL: "postgresql://appuser:apppass@postgres:5432/appdb"
+
+    container_name: fullstack-backend
+    restart: unless-stopped
+
+    environment:
+      DATABASE_URL: "postgresql://appuser:apppass@postgres:5432/appdb"
+      JWT_SECRET: "clave_secreta_local"
+      PORT: "4000"
+
+    ports:
+      - "4000:4000"
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: "http://localhost:4000"
+
+    container_name: fullstack-frontend
+    restart: unless-stopped
+
+    ports:
+      - "5173:80"
+
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
+
