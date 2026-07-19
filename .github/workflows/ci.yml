@@ -53,5 +53,3 @@ jobs:
 
       - name: Aplicar migraciones
         run: npx prisma migrate deploy
-
-        
