@@ -7,16 +7,31 @@ on:
     branches: [main]
 
 jobs:
-  backend:
-    name: Backend con GitHub Secrets
+  migraciones:
+    name: Migraciones y Seeds
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: testuser
+          POSTGRES_PASSWORD: testpass
+          POSTGRES_DB: testdb
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
 
     defaults:
       run:
         working-directory: ./Backend
 
     env:
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      DATABASE_URL: postgresql://testuser:testpass@localhost:5432/testdb
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
 
     steps:
@@ -36,5 +51,7 @@ jobs:
       - name: Generar Prisma Client
         run: npx prisma generate
 
-      - name: Compilar Backend
-        run: npm run build
+      - name: Aplicar migraciones
+        run: npx prisma migrate deploy
+
+        
