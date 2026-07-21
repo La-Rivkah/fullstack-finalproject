@@ -3,6 +3,7 @@ name: CI
 on:
   push:
     branches: [main]
+
   pull_request:
     branches: [main]
 
@@ -53,3 +54,21 @@ jobs:
 
       - name: Aplicar migraciones
         run: npx prisma migrate deploy
+
+  deploy-staging:
+    name: Deploy a Staging
+    needs: [migraciones]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Instalar Railway CLI
+        run: npm install -g @railway/cli
+
+      - name: Desplegar a Railway (staging)
+        run: railway up --service fullstack-finalproject --environment staging
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
