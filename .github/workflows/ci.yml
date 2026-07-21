@@ -7,6 +7,13 @@ on:
   pull_request:
     branches: [main]
 
+  workflow_dispatch:
+    inputs:
+      confirmacion:
+        description: 'Escribe DEPLOY para confirmar el despliegue a produccion'
+        required: true
+        type: string
+
 jobs:
   migraciones:
     name: Migraciones y Seeds
@@ -70,5 +77,22 @@ jobs:
 
       - name: Desplegar a Railway (staging)
         run: railway up --service fullstack-finalproject --environment staging
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+
+  deploy-produccion:
+    name: Deploy a Producción (manual)
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.confirmacion == 'DEPLOY'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Instalar Railway CLI
+        run: npm install -g @railway/cli
+
+      - name: Desplegar a Railway (producción)
+        run: railway up --service fullstack-finalproject --environment production
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
