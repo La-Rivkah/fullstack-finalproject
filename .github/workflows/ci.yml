@@ -95,4 +95,4 @@ jobs:
       - name: Desplegar a Railway (producción)
         run: railway up --service fullstack-finalproject --environment production
         env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          PRODUCTION_TOKEN: ${{ secrets.PRODUCTION_TOKEN }}
