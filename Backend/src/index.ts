@@ -6,7 +6,7 @@ import "dotenv/config";
 
 const app = express();
 
-const PORT = process.env.PORT || 3000;
+const PORT = Number(process.env.PORT) || 3000;
 
 const prisma = new PrismaClient();
 
@@ -39,11 +39,17 @@ app.post("/login", (req: Request, res: Response) => {
   });
 });
 
-const verifyToken = (req: Request, res: Response, next: NextFunction) => {
+const verifyToken = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {
-    return res.status(401).json({ message: "Token required" });
+    return res.status(401).json({
+      message: "Token required",
+    });
   }
 
   const token = authHeader.split(" ")[1];
@@ -52,12 +58,20 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
     jwt.verify(token, SECRET_KEY);
     next();
   } catch {
-    return res.status(403).json({ message: "Invalid token" });
+    return res.status(403).json({
+      message: "Invalid token",
+    });
   }
 };
 
 app.get("/", (_req: Request, res: Response) => {
-  res.send("Backend is working 🚀");
+  return res.send("Backend is working 🚀");
+});
+
+app.get("/health", (_req: Request, res: Response) => {
+  return res.status(200).json({
+    status: "ok",
+  });
 });
 
 app.get("/tasks", async (_req: Request, res: Response) => {
@@ -66,9 +80,13 @@ app.get("/tasks", async (_req: Request, res: Response) => {
       orderBy: { id: "asc" },
     });
 
-    res.json(tasks);
+    return res.json(tasks);
   } catch (error) {
-    res.status(500).json({ message: "Error fetching tasks" });
+    console.error("Error fetching tasks:", error);
+
+    return res.status(500).json({
+      message: "Error fetching tasks",
+    });
   }
 });
 
@@ -76,8 +94,10 @@ app.post("/tasks", async (req: Request, res: Response) => {
   try {
     const { title } = req.body;
 
-    if (!title) {
-      return res.status(400).json({ message: "Title required" });
+    if (!title || typeof title !== "string" || !title.trim()) {
+      return res.status(400).json({
+        message: "Title required",
+      });
     }
 
     const task = await prisma.task.create({
@@ -87,9 +107,13 @@ app.post("/tasks", async (req: Request, res: Response) => {
       },
     });
 
-    res.status(201).json(task);
+    return res.status(201).json(task);
   } catch (error) {
-    res.status(500).json({ message: "Error creating task" });
+    console.error("Error creating task:", error);
+
+    return res.status(500).json({
+      message: "Error creating task",
+    });
   }
 });
 
@@ -97,6 +121,12 @@ app.put("/tasks/:id", async (req: Request, res: Response) => {
   try {
     const id = Number(req.params.id);
     const { title, completed } = req.body;
+
+    if (Number.isNaN(id)) {
+      return res.status(400).json({
+        message: "Invalid task id",
+      });
+    }
 
     const task = await prisma.task.update({
       where: { id },
@@ -106,9 +136,13 @@ app.put("/tasks/:id", async (req: Request, res: Response) => {
       },
     });
 
-    res.json(task);
+    return res.json(task);
   } catch (error) {
-    res.status(500).json({ message: "Error updating task" });
+    console.error("Error updating task:", error);
+
+    return res.status(500).json({
+      message: "Error updating task",
+    });
   }
 });
 
@@ -116,16 +150,28 @@ app.delete("/tasks/:id", async (req: Request, res: Response) => {
   try {
     const id = Number(req.params.id);
 
+    if (Number.isNaN(id)) {
+      return res.status(400).json({
+        message: "Invalid task id",
+      });
+    }
+
     await prisma.task.delete({
       where: { id },
     });
 
-    res.json({ message: "Task deleted" });
+    return res.json({
+      message: "Task deleted",
+    });
   } catch (error) {
-    res.status(500).json({ message: "Error deleting task" });
+    console.error("Error deleting task:", error);
+
+    return res.status(500).json({
+      message: "Error deleting task",
+    });
   }
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server running on port ${PORT}`);
 });
