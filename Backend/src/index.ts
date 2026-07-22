@@ -65,7 +65,7 @@ const verifyToken = (
 };
 
 app.get("/", (_req: Request, res: Response) => {
-  res.send("Backend is working 🚀");
+  return res.send("Backend is working 🚀");
 });
 
 app.get("/health", (_req: Request, res: Response) => {
@@ -172,12 +172,6 @@ app.delete("/tasks/:id", async (req: Request, res: Response) => {
   }
 });
 
-throw new Error("fallo simulado");
-
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server running on port ${PORT}`);
 });
-
-
-
-
