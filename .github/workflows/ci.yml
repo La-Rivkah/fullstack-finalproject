@@ -47,9 +47,28 @@ jobs:
       matrix:
         proyecto: [Backend, Frontend]
 
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: testuser
+          POSTGRES_PASSWORD: testpass
+          POSTGRES_DB: testdb
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
     defaults:
       run:
         working-directory: ./${{ matrix.proyecto }}
+
+    env:
+      DATABASE_URL: postgresql://testuser:testpass@localhost:5432/testdb
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
 
     steps:
       - name: Descargar repositorio
@@ -64,6 +83,12 @@ jobs:
 
       - name: Instalar dependencias
         run: npm ci
+
+      - name: Generar Prisma Client y aplicar migraciones
+        if: matrix.proyecto == 'Backend'
+        run: |
+          npx prisma generate
+          npx prisma migrate deploy
 
       - name: Ejecutar pruebas
         run: npm test
@@ -149,4 +174,3 @@ jobs:
         run: railway up --service fullstack-finalproject --environment production
         env:
           RAILWAY_TOKEN: ${{ secrets.PRODUCTION_TOKEN }}
-          
