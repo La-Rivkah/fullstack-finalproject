@@ -16,10 +16,14 @@ on:
         required: true
         type: string
 
+permissions:
+  contents: read
+
 jobs:
   lint:
     name: 1. Lint Frontend
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     defaults:
       run:
@@ -46,6 +50,7 @@ jobs:
     name: 2. Pruebas Frontend
     needs: lint
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     defaults:
       run:
@@ -72,6 +77,7 @@ jobs:
     name: 3. Pruebas Backend
     needs: pruebas-frontend
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     services:
       postgres:
@@ -123,6 +129,7 @@ jobs:
     name: 4. Pruebas E2E con Playwright
     needs: pruebas-backend
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     defaults:
       run:
@@ -161,6 +168,7 @@ jobs:
     name: 5. Build Frontend
     needs: e2e
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     defaults:
       run:
@@ -195,6 +203,7 @@ jobs:
     name: 6. Build Backend
     needs: build-frontend
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     defaults:
       run:
@@ -233,6 +242,7 @@ jobs:
     name: 7. Migraciones y Seeds
     needs: build-backend
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     services:
       postgres:
@@ -285,6 +295,7 @@ jobs:
     needs: migraciones
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     steps:
       - name: Descargar repositorio
@@ -298,17 +309,19 @@ jobs:
       - name: Instalar Railway CLI
         run: npm install --global @railway/cli
 
-      - name: Desplegar a Railway
-        run: railway up --service fullstack-finalproject --environment PRODUCTION --ci
+      - name: Desplegar a Railway Staging
+        run: railway up --service fullstack-finalproject --environment staging --ci
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 
   deploy-produccion:
     name: Deploy a Producción (manual)
+    needs: migraciones
     if: >-
       github.event_name == 'workflow_dispatch' &&
       github.event.inputs.confirmacion == 'DEPLOY'
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     steps:
       - name: Descargar repositorio
@@ -322,7 +335,7 @@ jobs:
       - name: Instalar Railway CLI
         run: npm install --global @railway/cli
 
-      - name: Desplegar a Railway
+      - name: Desplegar a Railway Producción
         run: railway up --service fullstack-finalproject --environment production --ci
         env:
           RAILWAY_TOKEN: ${{ secrets.PRODUCTION_TOKEN }}
