@@ -2,10 +2,12 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
 
   pull_request:
-    branches: [main]
+    branches:
+      - main
 
   workflow_dispatch:
     inputs:
@@ -31,7 +33,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "npm"
+          cache: npm
           cache-dependency-path: Frontend/package-lock.json
 
       - name: Instalar dependencias
@@ -42,7 +44,7 @@ jobs:
 
   pruebas-frontend:
     name: 2. Pruebas Frontend
-    needs: [lint]
+    needs: lint
     runs-on: ubuntu-latest
 
     defaults:
@@ -57,18 +59,18 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "npm"
+          cache: npm
           cache-dependency-path: Frontend/package-lock.json
 
       - name: Instalar dependencias
         run: npm ci
 
       - name: Ejecutar pruebas del frontend
-        run: npm test -- --run
+        run: npm test
 
   pruebas-backend:
     name: 3. Pruebas Backend
-    needs: [pruebas-frontend]
+    needs: pruebas-frontend
     runs-on: ubuntu-latest
 
     services:
@@ -84,7 +86,7 @@ jobs:
           --health-cmd "pg_isready -U testuser -d testdb"
           --health-interval 5s
           --health-timeout 5s
-          --health-retries 5
+          --health-retries 10
 
     defaults:
       run:
@@ -102,7 +104,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "npm"
+          cache: npm
           cache-dependency-path: Backend/package-lock.json
 
       - name: Instalar dependencias
@@ -111,12 +113,15 @@ jobs:
       - name: Generar Prisma Client
         run: npx prisma generate
 
+      - name: Aplicar migraciones para las pruebas
+        run: npx prisma migrate deploy
+
       - name: Ejecutar pruebas del backend
         run: npm test
 
   e2e:
     name: 4. Pruebas E2E con Playwright
-    needs: [pruebas-backend]
+    needs: pruebas-backend
     runs-on: ubuntu-latest
 
     defaults:
@@ -131,21 +136,30 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "npm"
+          cache: npm
           cache-dependency-path: Frontend/package-lock.json
 
       - name: Instalar dependencias
         run: npm ci
 
-      - name: Instalar Chromium
+      - name: Instalar navegador Chromium
         run: npx playwright install --with-deps chromium
 
       - name: Ejecutar pruebas E2E
-        run: npx playwright test --project=chromium
+        run: npm run test:e2e
+
+      - name: Guardar reporte de Playwright
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: Frontend/playwright-report/
+          if-no-files-found: ignore
+          retention-days: 7
 
   build-frontend:
     name: 5. Build Frontend
-    needs: [e2e]
+    needs: e2e
     runs-on: ubuntu-latest
 
     defaults:
@@ -160,7 +174,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "npm"
+          cache: npm
           cache-dependency-path: Frontend/package-lock.json
 
       - name: Instalar dependencias
@@ -169,9 +183,17 @@ jobs:
       - name: Construir frontend
         run: npm run build
 
+      - name: Guardar build del frontend
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-build
+          path: Frontend/dist/
+          if-no-files-found: error
+          retention-days: 7
+
   build-backend:
     name: 6. Build Backend
-    needs: [build-frontend]
+    needs: build-frontend
     runs-on: ubuntu-latest
 
     defaults:
@@ -190,7 +212,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "npm"
+          cache: npm
           cache-dependency-path: Backend/package-lock.json
 
       - name: Instalar dependencias
@@ -199,9 +221,17 @@ jobs:
       - name: Construir backend
         run: npm run build
 
+      - name: Guardar build del backend
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-build
+          path: Backend/dist/
+          if-no-files-found: error
+          retention-days: 7
+
   migraciones:
     name: 7. Migraciones y Seeds
-    needs: [build-backend]
+    needs: build-backend
     runs-on: ubuntu-latest
 
     services:
@@ -217,7 +247,7 @@ jobs:
           --health-cmd "pg_isready -U testuser -d testdb"
           --health-interval 5s
           --health-timeout 5s
-          --health-retries 5
+          --health-retries 10
 
     defaults:
       run:
@@ -225,7 +255,7 @@ jobs:
 
     env:
       DATABASE_URL: postgresql://testuser:testpass@localhost:5432/testdb
-      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      JWT_SECRET: test_jwt_secret
 
     steps:
       - name: Descargar repositorio
@@ -235,7 +265,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "npm"
+          cache: npm
           cache-dependency-path: Backend/package-lock.json
 
       - name: Instalar dependencias
@@ -252,16 +282,21 @@ jobs:
 
   deploy-staging:
     name: 8. Deploy a Staging
-    needs: [migraciones]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: migraciones
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
 
     steps:
       - name: Descargar repositorio
         uses: actions/checkout@v4
 
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
       - name: Instalar Railway CLI
-        run: npm install -g @railway/cli
+        run: npm install --global @railway/cli
 
       - name: Desplegar a Railway
         run: railway up --service fullstack-finalproject --environment PRODUCTION --ci
@@ -270,15 +305,22 @@ jobs:
 
   deploy-produccion:
     name: Deploy a Producción (manual)
-    if: github.event_name == 'workflow_dispatch' && github.event.inputs.confirmacion == 'DEPLOY'
+    if: >-
+      github.event_name == 'workflow_dispatch' &&
+      github.event.inputs.confirmacion == 'DEPLOY'
     runs-on: ubuntu-latest
 
     steps:
       - name: Descargar repositorio
         uses: actions/checkout@v4
 
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
       - name: Instalar Railway CLI
-        run: npm install -g @railway/cli
+        run: npm install --global @railway/cli
 
       - name: Desplegar a Railway
         run: railway up --service fullstack-finalproject --environment production --ci
