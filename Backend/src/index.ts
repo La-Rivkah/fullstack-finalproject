@@ -65,7 +65,7 @@ const verifyToken = (
 };
 
 app.get("/", (_req: Request, res: Response) => {
-  return res.send("Backend is working 🚀");
+  return res.send("Backend Full Stack verificado correctamente 🚀");
 });
 
 app.get("/health", (_req: Request, res: Response) => {
