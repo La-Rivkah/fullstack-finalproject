@@ -332,3 +332,5 @@ jobs:
         run: railway up --service fullstack-finalproject --environment production --ci
         env:
           RAILWAY_TOKEN: ${{ secrets.PRODUCTION_TOKEN }}
+
+#tes
