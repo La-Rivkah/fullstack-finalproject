@@ -15,8 +15,60 @@ on:
         type: string
 
 jobs:
-  migraciones:
-    name: Migraciones y Seeds
+  lint:
+    name: 1. Lint Frontend
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./Frontend
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: Frontend/package-lock.json
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Ejecutar lint
+        run: npm run lint
+
+  pruebas-frontend:
+    name: 2. Pruebas Frontend
+    needs: [lint]
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./Frontend
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: Frontend/package-lock.json
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Ejecutar pruebas del frontend
+        run: npm test -- --run
+
+  pruebas-backend:
+    name: 3. Pruebas Backend
+    needs: [pruebas-frontend]
     runs-on: ubuntu-latest
 
     services:
@@ -29,7 +81,140 @@ jobs:
         ports:
           - 5432:5432
         options: >-
-          --health-cmd pg_isready
+          --health-cmd "pg_isready -U testuser -d testdb"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
+    defaults:
+      run:
+        working-directory: ./Backend
+
+    env:
+      DATABASE_URL: postgresql://testuser:testpass@localhost:5432/testdb
+      JWT_SECRET: test_jwt_secret
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: Backend/package-lock.json
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Generar Prisma Client
+        run: npx prisma generate
+
+      - name: Ejecutar pruebas del backend
+        run: npm test
+
+  e2e:
+    name: 4. Pruebas E2E con Playwright
+    needs: [pruebas-backend]
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./Frontend
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: Frontend/package-lock.json
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Instalar Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Ejecutar pruebas E2E
+        run: npx playwright test --project=chromium
+
+  build-frontend:
+    name: 5. Build Frontend
+    needs: [e2e]
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./Frontend
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: Frontend/package-lock.json
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Construir frontend
+        run: npm run build
+
+  build-backend:
+    name: 6. Build Backend
+    needs: [build-frontend]
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./Backend
+
+    env:
+      DATABASE_URL: postgresql://testuser:testpass@localhost:5432/testdb
+      JWT_SECRET: test_jwt_secret
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: Backend/package-lock.json
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Construir backend
+        run: npm run build
+
+  migraciones:
+    name: 7. Migraciones y Seeds
+    needs: [build-backend]
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: testuser
+          POSTGRES_PASSWORD: testpass
+          POSTGRES_DB: testdb
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U testuser -d testdb"
           --health-interval 5s
           --health-timeout 5s
           --health-retries 5
@@ -62,8 +247,11 @@ jobs:
       - name: Aplicar migraciones
         run: npx prisma migrate deploy
 
+      - name: Ejecutar seed
+        run: npx prisma db seed
+
   deploy-staging:
-    name: Deploy a Staging
+    name: 8. Deploy a Staging
     needs: [migraciones]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
@@ -75,8 +263,8 @@ jobs:
       - name: Instalar Railway CLI
         run: npm install -g @railway/cli
 
-      - name: Desplegar a Railway (staging)
-        run: railway up --service fullstack-finalproject --environment PRODUCTION
+      - name: Desplegar a Railway
+        run: railway up --service fullstack-finalproject --environment PRODUCTION --ci
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 
@@ -92,7 +280,7 @@ jobs:
       - name: Instalar Railway CLI
         run: npm install -g @railway/cli
 
-      - name: Desplegar a Railway (producción)
-        run: railway up --service fullstack-finalproject --environment production
+      - name: Desplegar a Railway
+        run: railway up --service fullstack-finalproject --environment production --ci
         env:
           RAILWAY_TOKEN: ${{ secrets.PRODUCTION_TOKEN }}
