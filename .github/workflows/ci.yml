@@ -10,11 +10,6 @@ on:
       - main
 
   workflow_dispatch:
-    inputs:
-      confirmacion:
-        description: "Escribe DEPLOY para confirmar el despliegue a produccion"
-        required: true
-        type: string
 
 permissions:
   contents: read
@@ -293,7 +288,7 @@ jobs:
   deploy-staging:
     name: 8. Deploy a Staging
     needs: migraciones
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: ${{ false }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
@@ -317,9 +312,7 @@ jobs:
   deploy-produccion:
     name: Deploy a Producción (manual)
     needs: migraciones
-    if: >-
-      github.event_name == 'workflow_dispatch' &&
-      github.event.inputs.confirmacion == 'DEPLOY'
+    if: ${{ false }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
